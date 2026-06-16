@@ -1,6 +1,57 @@
 # 8-Week Execution Plan
 
+**Program:** RCC Cohort Program Summer 2026
+**Updated:** 2026-06-16
+
 > Open decisions (simulator, SLAM algorithm, sim-to-real scope) must be resolved in Week 1. Items marked **[OPEN]** cannot be fully specified until those choices are made.
+
+---
+
+## Parallel Workstream Strategy
+
+After the shared Week 2 foundation, work splits into three independent tracks that run in parallel through Weeks 3–4 and converge at integration in Week 6.
+
+```mermaid
+gantt
+    dateFormat  WW
+    axisFormat  Week %W
+
+    section All
+    Kickoff & setup          : w01, 1w
+    Shared foundation        : w02, 1w
+
+    section Navigation
+    SLAM + mapping           : w03, 1w
+    Nav2 + waypoints         : w04, 1w
+    Nav validation           : w05, 1w
+
+    section Manipulation
+    MoveIt 2 + fixed base    : w03, 1w
+    Pick from known pose     : w04, 1w
+    Pick from detected pose  : w05, 1w
+
+    section Vision
+    YOLOv8n on test images   : w03, 1w
+    Depth fusion + /object_pose : w04, 1w
+    Vision validation        : w05, 1w
+
+    section All
+    Full pipeline integration : w06, 1w
+    Polish & testing         : w07, 1w
+    Demo & wrap-up           : w08, 1w
+```
+
+**Track owners:**
+| Track | Lead | Supporting |
+|---|---|---|
+| Navigation | Basavaraj | Arjun (CI + interfaces) |
+| Manipulation | Arjun | Basavaraj (MoveIt 2 config) |
+| Vision | Alexander | Durraiyah (telemetry logging) |
+
+The tracks are designed to be decoupled:
+- **Manipulation** works with the base at a fixed, hardcoded pose — no Nav2 or SLAM needed.
+- **Vision** works with a static camera position in sim or pre-captured test images — no navigation or arm needed.
+- **Navigation** builds the mobile base stack independently and hands off to the full system at Week 6.
 
 ---
 
@@ -8,14 +59,14 @@
 
 | Week | Theme | Key Deliverable |
 |---|---|---|
-| 1 | Kickoff & setup | Dev environment running for all members; all blocking decisions closed |
-| 2 | Robot in sim | Robot URDF spawned in simulator; sensor topics verified in RViz2 |
-| 3 | SLAM & mapping | Map generated; robot localizes to within 0.3 m of ground truth |
-| 4 | Autonomous navigation | Nav2 navigates to 3 goal waypoints without collision |
-| 5 | Perception & arm | Object detected; arm picks and places from detected pose |
-| 6 | Full pipeline | End-to-end: navigate → detect → pick → place (2/3 runs succeed) |
+| 1 | Kickoff & setup | Dev environment running; all blocking decisions closed |
+| 2 | Shared foundation | Robot URDF in sim; all sensor topics verified |
+| 3 | Parallel tracks begin | Nav: map generated · Arm: MoveIt 2 moving joints · Vision: YOLOv8n detecting objects |
+| 4 | Subsystems mature | Nav: autonomous waypoints · Arm: picks from hardcoded pose · Vision: 3D pose published |
+| 5 | Cross-track integration | Arm picks from camera-detected pose; Nav validated independently |
+| 6 | Full pipeline | Navigate → detect → pick → place (2/3 runs succeed) |
 | 7 | Polish & testing | All acceptance criteria met; dry-run demo recorded |
-| 8 | Final demo & wrap-up | Demo video published; repo documented and clean |
+| 8 | Demo & wrap-up | Demo video published; repo documented and clean |
 
 ---
 
@@ -27,7 +78,7 @@
 
 | Task | Owner |
 |---|---|
-| Host kickoff standup; facilitate decision on simulator, SLAM, sim-to-real scope, telemetry scope | Nick |
+| Host kickoff standup; decide on simulator, SLAM, sim-to-real scope, telemetry scope | Nick |
 | Confirm M3 Pro IMU presence/absence (unlocks SLAM decision) | Alexander |
 | Create shared Docker image + `docker-compose.yml`; verify it builds on GitHub Codespaces | Arjun |
 | Confirm chosen simulator launches in Docker container | Basavaraj |
@@ -39,82 +90,125 @@
 
 ---
 
-### Week 2 — Robot Model & Simulation Environment
+### Week 2 — Shared Foundation
 
-**Goal:** The robot is spawned in the simulator with working sensor topics.
+**Goal:** The robot model is in the simulator with all sensor topics live. This is the shared baseline all three tracks depend on.
 
 | Task | Owner |
 |---|---|
 | Build warehouse-style world file (walls, shelves, floor, obstacle objects) | Basavaraj |
 | Source or build M3 Pro URDF; verify joint names and geometry | Alexander |
 | Spawn URDF in sim; verify `/scan`, `/camera/color/image_raw`, `/camera/depth/image_raw` topics publish | Basavaraj |
+| Confirm arm joint state topics (`/joint_states`) publish correctly | Basavaraj |
 | Add CI job: ROS 2 workspace builds on every PR | Arjun |
 | Subscribe to `/odom` and `/scan`; log timestamped CSV as first telemetry deliverable | Durraiyah |
-| Manual test: drive robot via teleop, verify no clipping, collision, or physics issues | TBD |
+| Manual test: drive robot via teleop; verify no clipping, collision, or physics issues | TBD |
 
-**Done when:** Robot drives in sim via teleop with LiDAR and RGB-D topics visible and logging in RViz2.
-
----
-
-### Week 3 — SLAM & Mapping
-
-**Goal:** A persistent map of the simulated environment is generated; the robot localizes within it.
-
-| Task | Owner |
-|---|---|
-| Integrate chosen SLAM algorithm; configure parameters for sim environment | Basavaraj |
-| Teleop robot around warehouse world; save map (`map.pgm` + `map.yaml`) | Basavaraj |
-| Launch map server + AMCL (or SLAM Toolbox localization); verify pose estimate in RViz2 | Basavaraj |
-| Verify RGB-D camera field of view is not occluded by arm in URDF | Alexander |
-| Add robot pose (`/amcl_pose` or `/slam_toolbox/pose`) to telemetry log | Durraiyah |
-| Localization test: robot placed at 3 different known poses; verify AMCL converges within 0.3 m | TBD |
-
-**Done when:** Robot spawns at a random pose and localizes within 0.3 m of ground truth within 30 seconds, verified across 3 poses.
+**Done when:** Robot drives in sim via teleop with LiDAR, RGB-D, and arm joint state topics all visible in RViz2.
 
 ---
 
-### Week 4 — Autonomous Navigation
+### Weeks 3–4 — Parallel Tracks
 
-**Goal:** Nav2 navigates the robot to a goal pose, avoiding obstacles.
+The three tracks below run concurrently. Each has its own definition of done and does not block the others.
 
+---
+
+#### Track A — Navigation (Basavaraj)
+
+**Goal by end of Week 4:** Robot navigates autonomously to any waypoint in the sim environment without collision.
+
+**Week 3 tasks:**
 | Task | Owner |
 |---|---|
-| Configure Nav2 (costmaps, global planner, local planner); integrate with saved map and AMCL | Basavaraj |
+| Integrate SLAM; teleop to build map; save `map.pgm` + `map.yaml` | Basavaraj |
+| Launch map server + localization; verify pose estimate in RViz2 | Basavaraj |
+| Add robot pose to telemetry log | Durraiyah |
+
+**Week 4 tasks:**
+| Task | Owner |
+|---|---|
+| Configure Nav2 (costmaps, global + local planners); integrate with saved map | Basavaraj |
+| Write goal publisher node (goal x/y/θ → Nav2 action) | Arjun |
 | Test navigation to 3 hardcoded waypoints; tune planner parameters | Basavaraj |
-| Write goal publisher node with a simple interface (goal x/y/theta → Nav2 action) | Arjun |
-| Log navigation events (goal sent, path planned, goal reached/failed) to telemetry pipeline | Durraiyah |
-| Navigation acceptance test: robot reaches goal within 0.2 m, no collisions, 3/3 trials | TBD |
+| Log navigation events (goal sent, path planned, reached/failed) to telemetry | Durraiyah |
 
-**Done when:** Robot autonomously navigates to 3 different goal poses without collision, 3/3 trials.
+**Track A done when:** Robot navigates to 3 different goal poses without collision, 3/3 trials.
 
 ---
 
-### Week 5 — Perception & Arm Control
+#### Track B — Manipulation (Arjun + Basavaraj)
 
-**Goal:** YOLOv8n detects a target object; the arm picks and places it.
+**Goal by end of Week 4:** Arm picks an object from a hardcoded, known pose and places it at a target pose — with the base fixed in position.
+
+The base is either spawned at a fixed pose in sim or held in place with Nav2 goals disabled. No SLAM or localization is needed for this track.
+
+**Week 3 tasks:**
+| Task | Owner |
+|---|---|
+| Configure MoveIt 2 for the sim arm; verify joint states and planning scene | Basavaraj |
+| Command arm to a set of test joint configurations; verify no self-collision | Arjun |
+
+**Week 4 tasks:**
+| Task | Owner |
+|---|---|
+| Write pick-and-place action server: hardcoded grasp pose → plan → execute pick → place | Arjun |
+| Test pick sequence from 3 hardcoded object positions | Arjun |
+| Log arm action events (goal pose, success/fail) to telemetry | Durraiyah |
+
+**Track B done when:** Arm picks an object from each of 3 hardcoded poses and places it at a target, 3/3 trials.
+
+---
+
+#### Track C — Vision (Alexander + Durraiyah)
+
+**Goal by end of Week 4:** YOLOv8n detects a target object and publishes its 3D pose in the map frame — using either the sim camera or static test images.
+
+Development can start with pre-captured images or a static camera in sim; no navigation or arm movement is needed.
+
+**Week 3 tasks:**
+| Task | Owner |
+|---|---|
+| Write YOLOv8n ROS 2 node; publish `/detections` on RGB image | Alexander |
+| Test detection against a set of static test images; tune confidence threshold | Alexander |
+| Log detection events (class, confidence, bounding box) to telemetry | Durraiyah |
+
+**Week 4 tasks:**
+| Task | Owner |
+|---|---|
+| Depth projection: project detection center to 3D point in camera frame | Alexander |
+| TF transform: publish `/object_pose` in map frame (`geometry_msgs/PoseStamped`) | Alexander |
+| Validate `/object_pose` against known ground-truth object positions in sim | Alexander |
+| Add 3D pose to telemetry log | Durraiyah |
+
+**Track C done when:** Object placed at 5 known positions in sim; `/object_pose` error < 5 cm from ground truth, 4/5 trials.
+
+---
+
+### Week 5 — Cross-Track Integration
+
+**Goal:** Vision output drives the arm; Navigation is independently validated. Each sub-system pairing is tested before the full three-way integration in Week 6.
 
 | Task | Owner |
 |---|---|
-| Write YOLOv8n ROS 2 node; publish `/detections` (bounding boxes on RGB image) | Alexander |
-| Depth projection: project detection center to 3D; publish `/object_pose` in map frame | Alexander |
-| Configure MoveIt 2 for sim arm; verify joint states publish correctly | Basavaraj |
-| Write pick-and-place action server: receives object pose → plans arm motion → executes | Arjun |
-| Log detection events (class, confidence, 3D pose, timestamp) to telemetry pipeline | Durraiyah |
-| Perception test: object placed at 5 known positions; detection rate ≥ 4/5 | TBD |
+| Wire `/object_pose` (Track C) into pick-and-place action server (Track B); test arm picking from camera-detected pose | Alexander + Arjun |
+| Navigation acceptance test: robot reaches 3 goal poses, 3/3, no collisions (Track A sign-off) | TBD |
+| Perception acceptance test: detection rate ≥ 4/5 at known positions (Track C sign-off) | TBD |
+| Manipulation acceptance test: pick from detected pose succeeds 3/3 (Track B + C sign-off) | TBD |
+| Telemetry dashboard: live pose, path, detection markers, arm state visible in RViz2 | Durraiyah |
 
-**Done when:** Arm successfully picks an object from a camera-detected pose and places it at a target pose, detection rate ≥ 4/5.
+**Done when:** Vision → Arm integration succeeds 3/3 trials; Navigation validated independently 3/3 trials.
 
 ---
 
 ### Week 6 — Full Pipeline Integration
 
-**Goal:** End-to-end mission: robot navigates to object, detects it, picks and places it.
+**Goal:** All three tracks integrated into a single end-to-end mission.
 
 | Task | Owner |
 |---|---|
-| Wire Nav2 → detection → pick-and-place into a single mission executor node | Arjun |
+| Wire mission executor: Nav2 drives base to object location → Vision detects → Arm picks and places | Arjun |
 | Integration testing; file GitHub issues for each failure mode | All |
-| Telemetry dashboard: live pose, path, detection events, arm state (RViz2 at minimum) | Durraiyah |
 | End-to-end test: 3 full mission runs; record success rate and failure modes | TBD |
 | Bug fixing sprint targeting blockers for the demo | All |
 
@@ -131,7 +225,7 @@
 | Run full test suite against all acceptance criteria; produce pass/fail report | TBD |
 | Address remaining test failures (triage in standup) | All |
 | Finalize CI pipeline; all tests passing on `main` | Arjun |
-| Finalize telemetry dashboard; ensure it runs without errors during a full mission | Durraiyah |
+| Finalize telemetry dashboard; confirm it runs cleanly during a full mission | Durraiyah |
 | *(Stretch)* Bring up ROS 2 on physical M3 Pro; verify sensor topics match URDF | Alexander |
 | Record dry-run demo; review and identify rough edges | All |
 
@@ -167,10 +261,11 @@
 | Low-spec hardware can't run sim locally | High | Medium | GitHub Codespaces as primary fallback; Arjun validates Docker image on Codespaces in Week 1 |
 | Durraiyah's ROS 2 ramp-up takes > 2 weeks | Medium | Low | Telemetry starts with pure-Python CSV logging (no ROS 2 needed until Week 3); Kafka work begins in parallel |
 | M3 Pro has no IMU → LIO-SAM not viable | Medium | Low | Default to SLAM Toolbox from the start; decision closes once Alexander confirms IMU in Week 1 |
-| Arm pick-and-place too complex for timeline | Medium | Medium | Use fixed grasp offset from detected centroid — skip full grasp pose estimation; re-scope in Week 5 standup if needed |
-| Sim-to-real fails in Weeks 7–8 | Medium | Low | Sim demo is the primary deliverable; hardware is explicitly a stretch goal and will be cut without affecting program success |
+| Arm pick-and-place too complex for timeline | Medium | Medium | Track B starts with hardcoded grasp poses — full grasp pose estimation is not required; re-scope in Week 4 standup if needed |
+| Vision–Arm integration harder than expected | Medium | Medium | Week 5 is dedicated to this pairing; if blocked, fall back to hardcoded pose for demo and note it as future work |
+| Sim-to-real fails in Weeks 7–8 | Medium | Low | Sim demo is the primary deliverable; hardware is explicitly a stretch goal |
 | Testing tasks unowned after team change | Medium | Medium | Assign testing ownership at Week 1 kickoff; distribute across existing members or recruit a replacement |
-| Timezone conflicts slow async decisions | Medium | Medium | All blocking decisions made synchronously at kickoff; subsequent decisions via GitHub PRs with 48-hour review window |
+| Timezone conflicts slow async decisions | Medium | Medium | Blocking decisions made synchronously at kickoff; subsequent decisions via GitHub PRs with 48-hour review window |
 
 ---
 
