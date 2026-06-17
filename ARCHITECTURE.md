@@ -13,7 +13,7 @@ A ROS 2-based mobile manipulation robot that:
 3. Picks and places the object using a mounted robotic arm (MoveIt 2)
 4. Streams telemetry data to a live dashboard throughout
 
-The system is developed and validated in simulation first. Sim-to-real transfer to a physical Yahboom ROSMASTER M3 Pro is a stretch goal for Week 8.
+The system is developed and validated in simulation first. Sim-to-real transfer to a physical Yahboom ROSMASTER M3 Pro is targeted for Weeks 7–8.
 
 ---
 
@@ -139,7 +139,7 @@ Scope (what gets streamed, what analytics are shown) to be decided in Week 1. At
 |---|---|---|---|
 | Simulator | Gazebo Harmonic vs. MuJoCo/RoboSuite | Yes — blocks Weeks 2+ | Alexander + Basavaraj |
 | SLAM algorithm | SLAM Toolbox vs. LIO-SAM | Yes — blocks Week 3 | Basavaraj (after Alexander confirms IMU) |
-| Sim-to-real scope | Week 8 deliverable vs. stretch goal | Yes — affects plan | Nick |
+| Sim-to-real scope | Planned for Weeks 7–8; exact acceptance criteria TBD | No — in scope | Nick |
 | Telemetry pipeline | RViz2 only vs. Kafka/Spark | No — parallelizable | Durraiyah |
 | Imitation learning | In scope vs. dropped | No — affects Alexander Weeks 1–4 | Alexander |
 
@@ -159,7 +159,7 @@ Transfer steps:
 5. Retune YOLOv8n confidence threshold for real lighting conditions
 6. Week 8 (stretch): live demo on hardware
 
-The simulation demo is the **primary deliverable**. Sim-to-real is explicitly a stretch goal and will be cut if simulation milestones slip.
+The simulation demo is the **primary deliverable**. Sim-to-real transfer is planned for Weeks 7–8 and will be re-scoped if simulation milestones slip.
 
 ---
 

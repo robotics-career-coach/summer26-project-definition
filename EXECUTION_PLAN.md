@@ -45,7 +45,7 @@ gantt
 | Track | Lead | Supporting |
 |---|---|---|
 | Navigation | Basavaraj | Arjun (CI + interfaces) |
-| Manipulation | Arjun | Basavaraj (MoveIt 2 config) |
+| Manipulation | Arjun | Basavaraj (MoveIt 2 config), Alexander (perception hand-off) |
 | Vision | Alexander | Durraiyah (telemetry logging) |
 
 The tracks are designed to be decoupled:
@@ -226,7 +226,7 @@ Development can start with pre-captured images or a static camera in sim; no nav
 | Address remaining test failures (triage in standup) | All |
 | Finalize CI pipeline; all tests passing on `main` | Arjun |
 | Finalize telemetry dashboard; confirm it runs cleanly during a full mission | Durraiyah |
-| *(Stretch)* Bring up ROS 2 on physical M3 Pro; verify sensor topics match URDF | Alexander |
+| Bring up ROS 2 on physical M3 Pro; verify sensor topics match URDF | Alexander |
 | Record dry-run demo; review and identify rough edges | All |
 
 **Done when:** ≥ 3/3 end-to-end runs succeed in sim; dry-run demo recorded.
@@ -240,13 +240,13 @@ Development can start with pre-captured images or a static camera in sim; no nav
 | Task | Owner |
 |---|---|
 | Record final demo video (simulation) | All |
-| *(Stretch)* Live demo on M3 Pro hardware | Alexander |
+| Live demo on M3 Pro hardware | Alexander |
 | Finalize all repo documentation (README, ARCHITECTURE.md, ROLES.md, inline code comments) | All |
 | Publish repo and distribute to participants for portfolio use | Nick |
 | Program retrospective | All |
 
 **Deliverables:**
-- Recorded demo video (sim; stretch: hardware)
+- Recorded demo video (simulation and hardware)
 - Clean, documented GitHub repo (Apache 2.0)
 - Architecture document, roles document, and execution plan updated to reflect what was actually built
 - Final README with instructions for running the demo
@@ -263,7 +263,7 @@ Development can start with pre-captured images or a static camera in sim; no nav
 | M3 Pro has no IMU → LIO-SAM not viable | Medium | Low | Default to SLAM Toolbox from the start; decision closes once Alexander confirms IMU in Week 1 |
 | Arm pick-and-place too complex for timeline | Medium | Medium | Track B starts with hardcoded grasp poses — full grasp pose estimation is not required; re-scope in Week 4 standup if needed |
 | Vision–Arm integration harder than expected | Medium | Medium | Week 5 is dedicated to this pairing; if blocked, fall back to hardcoded pose for demo and note it as future work |
-| Sim-to-real fails in Weeks 7–8 | Medium | Low | Sim demo is the primary deliverable; hardware is explicitly a stretch goal |
+| Sim-to-real transfer harder than expected | Medium | Medium | Simulation demo is the primary deliverable; if hardware bring-up slips, re-scope to partial hardware validation and document remaining gaps |
 | Testing tasks unowned after team change | Medium | Medium | Assign testing ownership at Week 1 kickoff; distribute across existing members or recruit a replacement |
 | Timezone conflicts slow async decisions | Medium | Medium | Blocking decisions made synchronously at kickoff; subsequent decisions via GitHub PRs with 48-hour review window |
 

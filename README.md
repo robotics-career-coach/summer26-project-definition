@@ -11,7 +11,7 @@ This is a living document. Update it as the team reaches decisions, and continue
 
 ## Project Summary
 
-This project is a mobile manipulation system built on [ROS 2](https://docs.ros.org) — a wheeled robot base equipped with a robotic arm, LiDAR, and an RGB-D camera that autonomously navigates to target locations in a warehouse-style environment and performs pick-and-place operations. The team will develop and validate the system in simulation first, with a stretch goal of deploying it on a physical [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) robot owned by a team member. The project gives each participant hands-on experience across the full robotics stack: SLAM, autonomous navigation ([Nav2](https://navigation.ros.org)), object detection ([YOLOv8n](https://docs.ultralytics.com)), arm control ([MoveIt 2](https://moveit.ros.org)), and data telemetry — while producing a portfolio artifact demonstrable to employers.
+This project is a mobile manipulation system built on [ROS 2](https://docs.ros.org) — a wheeled robot base equipped with a robotic arm, LiDAR, and an RGB-D camera that autonomously navigates to target locations in a warehouse-style environment and performs pick-and-place operations. The team will develop and validate the system in simulation first, then deploy it on a physical [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) robot owned by a team member to demonstrate sim-to-real transfer. The project gives each participant hands-on experience across the full robotics stack: SLAM, autonomous navigation ([Nav2](https://navigation.ros.org)), object detection ([YOLOv8n](https://docs.ultralytics.com)), arm control ([MoveIt 2](https://moveit.ros.org)), and data telemetry — while producing a portfolio artifact demonstrable to employers.
 
 -----
 
@@ -19,7 +19,7 @@ This project is a mobile manipulation system built on [ROS 2](https://docs.ros.o
 
 The operator launches a simulated warehouse environment with the robot at a known starting position and a target object placed at a fixed location. The robot localizes itself using a pre-built SLAM map, then [Nav2](https://navigation.ros.org) plans a collision-free path to the object's location. As the robot approaches, its RGB-D camera runs [YOLOv8n](https://docs.ultralytics.com) to detect and localize the object in 3D. The mounted arm executes a pick motion, grasps the object, and places it at a designated drop-off zone. Throughout the run, a live telemetry dashboard displays robot pose, planned path, LiDAR scan, and arm joint states. The demo concludes with the object placed at the destination and a telemetry summary.
 
-*(Stretch goal: the same scenario runs on the physical [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net).)*
+The same scenario is then run on the physical [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) to validate sim-to-real transfer.
 
 -----
 
@@ -37,7 +37,7 @@ The operator launches a simulated warehouse environment with the robot at a know
 | Perception | [YOLOv8n](https://docs.ultralytics.com) (Ultralytics) | CPU-viable; runs on low-spec hardware |
 | Telemetry — live | [RViz2](https://github.com/ros2/rviz) | |
 | Telemetry — pipeline | **[OPEN]** [Kafka](https://kafka.apache.org) + [Spark](https://spark.apache.org) + [Power BI](https://powerbi.microsoft.com) / custom | Durraiyah's ownership area; scope TBD in Week 1 |
-| Real hardware | [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) | Alexander's robot; sim-to-real is a Week 8 stretch goal |
+| Real hardware | [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) | Alexander's robot; sim-to-real transfer targeted for Weeks 7–8 |
 | Dev environment | [Docker](https://www.docker.com) + [GitHub Codespaces](https://github.com/features/codespaces) / [The Construct](https://www.theconstructsim.com) | Codespaces for low-spec members (120 core-hrs/month free tier) |
 | CI | [GitHub Actions](https://github.com/features/actions) | |
 

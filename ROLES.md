@@ -10,14 +10,30 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 | Member | Location | Timezone | Role |
 |---|---|---|---|
+| Nick Kirsch | — | — | Program Manager |
 | Alexander Mak | Philadelphia, PA | ET | Perception & Hardware Lead |
-| Arjun Malarmannan | Boston, MA | ET | Integration & DevOps Lead |
+| Arjun Malarmannan | Boston, MA | ET | Software Engineering Lead |
 | Basavaraj Chikki | Bengaluru, India | IST | Navigation & Simulation Lead |
 | Durraiyah Muneer | Karachi, Pakistan | PKT | Telemetry & Data Lead |
 
 ---
 
 ## Workstream Ownership
+
+### Nick Kirsch — Program Manager
+
+**Role:** Provides guidance to the cohort, structure to the program, and holds the team accountable for deliverables and timelines.
+
+**Primary ownership:**
+- Kickoff facilitation and resolution of blocking decisions
+- Weekly standup structure and cadence
+- Testing and acceptance criteria ownership assignments
+- Final repo publication and distribution to participants for portfolio use
+- Program retrospective
+
+**Not a developer on the project** — Nick does not own code workstreams but participates in PR reviews and architectural decisions as needed.
+
+---
 
 ### Alexander Mak — Perception & Hardware Lead
 
@@ -37,21 +53,23 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ---
 
-### Arjun Malarmannan — Integration & DevOps Lead
+### Arjun Malarmannan — Software Engineering Lead
 
 **Background:** PLCs, AMR systems, JIRA, Azure DevOps, REST APIs; real warehouse robotics experience
 
 **Primary ownership:**
-- Shared Docker image + `docker-compose.yml`; verify it runs on GitHub Codespaces
-- GitHub Actions CI pipeline (build, lint, test on every PR)
 - Mission executor node: wires Nav2 → perception → pick-and-place into a single coordinated flow
+- Pick-and-place action server (MoveIt 2 integration)
 - ROS 2 topic/service interface contracts (document what each node publishes/subscribes)
 
 **Contributing to:**
+- Navigation stack (Nav2 goal publisher, waypoint testing, with Basavaraj)
+- Simulation environment setup and validation
+- MoveIt 2 arm configuration and testing
+- Shared Docker image + `docker-compose.yml`
 - Testing coordination (define integration test structure; owner TBD at kickoff)
-- Deployment documentation for Codespaces and The Construct
 
-**Note:** Arjun's warehouse AMR experience is a valuable reality check — flag when simulation assumptions diverge from how real AMR systems behave.
+**Note:** Arjun's warehouse AMR experience is a valuable reality check — flag when simulation assumptions diverge from how real AMR systems behave. This role is intentionally broad to give Arjun hands-on experience across the full robotics stack.
 
 ---
 
@@ -102,16 +120,16 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ---
 
-## Timezone Overlap
+## Timezones
 
-| Members | Approximate overlap window |
-|---|---|
-| Alexander + Arjun (ET) | All day |
-| Basavaraj (IST) + ET | 7:30–9:30 AM ET (5:00–7:00 PM IST) |
-| Durraiyah (PKT) + ET | 8:00–10:00 AM ET (5:00–7:00 PM PKT) |
-| All four | No single window covers all four timezones |
+| Member | Timezone | UTC Offset (summer) |
+|---|---|---|
+| Alexander Mak | US Eastern (ET) | UTC−4 |
+| Arjun Malarmannan | US Eastern (ET) | UTC−4 |
+| Basavaraj Chikki | India Standard Time (IST) | UTC+5:30 |
+| Durraiyah Muneer | Pakistan Standard Time (PKT) | UTC+5 |
 
-The team is async-first. GitHub comments and Slack are the primary collaboration channels. The weekly standup time should be set via a Doodle poll in Week 1 — aim for a window that minimizes off-hours asks on any one member.
+The team is **async-first** due to the gap between US Eastern and South Asian timezones. GitHub comments and Slack are the primary collaboration channels. Blocking decisions should be made via GitHub PRs with a 48-hour review window so no one is forced into off-hours work. The weekly standup time should be set via a Doodle poll in Week 1.
 
 ---
 
