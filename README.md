@@ -19,7 +19,7 @@ This project is a mobile manipulation system built on [ROS 2](https://docs.ros.o
 
 The operator launches a simulated warehouse environment with the robot at a known starting position and a target object placed at a fixed location. The robot localizes itself using a pre-built SLAM map, then [Nav2](https://navigation.ros.org) plans a collision-free path to the object's location. As the robot approaches, its RGB-D camera runs [YOLOv8n](https://docs.ultralytics.com) to detect and localize the object in 3D. The mounted arm executes a pick motion, grasps the object, and places it at a designated drop-off zone. Throughout the run, a live telemetry dashboard displays robot pose, planned path, LiDAR scan, and arm joint states. The demo concludes with the object placed at the destination and a telemetry summary.
 
-The same scenario is then run on the physical [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) to validate sim-to-real transfer.
+The same scenario is then run on the physical [Yahboom ROSMASTER M3 Pro](https://category.yahboom.net/products/rosmaster-m3-pro?srsltid=AfmBOooP-WOAP5M-1fvXw1VaqHvk0WCTG57-GLhuvUqhAOllnq4pMJfc) to validate sim-to-real transfer.
 
 -----
 
@@ -35,8 +35,7 @@ The same scenario is then run on the physical [Yahboom ROSMASTER M3 Pro](https:/
 | Navigation | [Nav2](https://navigation.ros.org) | |
 | Manipulation | [MoveIt 2](https://moveit.ros.org) | |
 | Perception | [YOLOv8n](https://docs.ultralytics.com) (Ultralytics) | CPU-viable; runs on low-spec hardware |
-| Telemetry — live | [RViz2](https://github.com/ros2/rviz) | |
-| Telemetry — pipeline | **[OPEN]** [Kafka](https://kafka.apache.org) + [Spark](https://spark.apache.org) + [Power BI](https://powerbi.microsoft.com) / custom | Durraiyah's ownership area; scope TBD in Week 1 |
+| Telemetry | [RViz2](https://github.com/ros2/rviz) + structured logging | Live visualization and local log files |
 | Real hardware | [Yahboom ROSMASTER M3 Pro](https://www.yahboom.net) | Alexander's robot; sim-to-real transfer targeted for Weeks 7–8 |
 | Dev environment | [Docker](https://www.docker.com) + [GitHub Codespaces](https://github.com/features/codespaces) / [The Construct](https://www.theconstructsim.com) | Codespaces for low-spec members (120 core-hrs/month free tier) |
 | CI | [GitHub Actions](https://github.com/features/actions) | |

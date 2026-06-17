@@ -10,7 +10,7 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 | Member | Location | Timezone | Role |
 |---|---|---|---|
-| Nick Kirsch | — | — | Program Manager |
+| Nicholas Kirsch | Pittsburgh, PA | ET | Program Manager |
 | Alexander Mak | Philadelphia, PA | ET | Perception & Hardware Lead |
 | Arjun Malarmannan | Boston, MA | ET | Software Engineering Lead |
 | Basavaraj Chikki | Bengaluru, India | IST | Navigation & Simulation Lead |
@@ -20,7 +20,7 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ## Workstream Ownership
 
-### Nick Kirsch — Program Manager
+### Nicholas Kirsch — Program Manager
 
 **Role:** Provides guidance to the cohort, structure to the program, and holds the team accountable for deliverables and timelines.
 
@@ -31,7 +31,7 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 - Final repo publication and distribution to participants for portfolio use
 - Program retrospective
 
-**Not a developer on the project** — Nick does not own code workstreams but participates in PR reviews and architectural decisions as needed.
+**Not a developer on the project** — Nicholas does not own code workstreams but participates in PR reviews and architectural decisions as needed.
 
 ---
 
@@ -94,17 +94,15 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 **Background:** Python, Java, Kafka, Spark, AWS, Azure, Power BI; strong data engineering; no prior ROS 2 experience
 
 **Primary ownership:**
-- Telemetry pipeline design and implementation (scope finalized in Week 1)
-- **Minimum deliverable:** Python rclpy subscriber nodes logging `/odom`, `/amcl_pose`, `/detections`, and navigation events to structured files
-- **Full deliverable (if scoped in):** ROS 2 data bridge → Kafka → Spark Streaming → Power BI or custom dashboard
-- Dashboard: robot pose history, path taken, detection events, arm action log, mission outcomes
+- Telemetry design and implementation
+- Python rclpy subscriber nodes logging `/odom`, `/amcl_pose`, `/detections`, and navigation events to structured files (CSV / JSON)
+- RViz2 live dashboard: robot pose history, path taken, detection events, arm action log, mission outcomes
 
 **ROS 2 ramp-up path (Weeks 1–2):**
 - Complete ROS 2 beginner Python tutorials (publisher/subscriber with rclpy)
 - First task: write a subscriber node for `/odom` that prints and logs to CSV — this is pure Python, no C++ required
-- The Kafka bridge is standard Kafka producer code once the ROS 2 subscriber is working
 
-**Note:** Durraiyah's data engineering background is the team's strongest asset for the telemetry workstream. Kafka/Spark experience maps directly once the ROS 2 data bridge is in place.
+**Note:** Durraiyah's data engineering background is the team's strongest asset for the telemetry workstream — structured logging, data formatting, and dashboard design all map directly to her skill set.
 
 ---
 

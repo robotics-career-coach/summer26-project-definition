@@ -259,7 +259,7 @@ Development can start with pre-captured images or a static camera in sim; no nav
 |---|---|---|---|
 | Simulator decision not resolved in Week 1 | Medium | High — blocks Week 2+ | Nick facilitates decision at kickoff; default to Gazebo Harmonic if no consensus by end of Week 1 |
 | Low-spec hardware can't run sim locally | High | Medium | GitHub Codespaces as primary fallback; Arjun validates Docker image on Codespaces in Week 1 |
-| Durraiyah's ROS 2 ramp-up takes > 2 weeks | Medium | Low | Telemetry starts with pure-Python CSV logging (no ROS 2 needed until Week 3); Kafka work begins in parallel |
+| Durraiyah's ROS 2 ramp-up takes > 2 weeks | Medium | Low | Telemetry starts with pure-Python CSV logging (no ROS 2 needed until Week 3) |
 | M3 Pro has no IMU → LIO-SAM not viable | Medium | Low | Default to SLAM Toolbox from the start; decision closes once Alexander confirms IMU in Week 1 |
 | Arm pick-and-place too complex for timeline | Medium | Medium | Track B starts with hardcoded grasp poses — full grasp pose estimation is not required; re-scope in Week 4 standup if needed |
 | Vision–Arm integration harder than expected | Medium | Medium | Week 5 is dedicated to this pairing; if blocked, fall back to hardcoded pose for demo and note it as future work |

@@ -31,7 +31,7 @@ flowchart TD
         Arm["Arm Controller<br/>(MoveIt 2)"]
     end
 
-    Telemetry["Telemetry Layer<br/>(RViz2 · Kafka → Spark → dashboard)"]
+    Telemetry["Telemetry Layer<br/>(RViz2 · structured logging)"]
 
     LiDAR --> SLAM
     RGBD --> Perception
@@ -69,6 +69,8 @@ flowchart TD
 | MuJoCo / RoboSuite | Strong fit for imitation learning (RoboMimic); Alexander's proposed stack | Requires significant glue code to integrate Nav2; adds complexity |
 
 **Recommendation:** Use Gazebo Harmonic as the primary simulation environment — it has the best compatibility with Nav2, MoveIt 2, and the full ROS 2 toolchain. If the team wants to pursue imitation learning (behavior cloning via RoboMimic), scope it as a parallel workstream with MuJoCo that shares only the perception code. Do not try to run both in the same simulation loop.
+
+**Isaac Sim interop:** Isaac Sim includes a [MuJoCo (MJCF) importer extension](https://docs.isaacsim.omniverse.nvidia.com/6.0.0/importer_exporter/ext_isaacsim_asset_importer_mjcf.html) that can import MuJoCo XML models directly. This is an option if the team wants to evaluate Isaac Sim as a simulation environment while reusing MuJoCo assets from Menagerie.
 
 ---
 
@@ -124,12 +126,11 @@ Notes:
 **Minimum (all members):**
 - RViz2: live robot pose, LiDAR scan, costmap, planned path, arm joint states, detection markers
 
-**Extended pipeline [OPEN — Durraiyah owns]:**
-- ROS 2 topic subscribers (Python / rclpy) → structured log files or Kafka topics
-- Kafka → Spark Streaming → Power BI or custom web dashboard
-- Candidate topics to stream: `/odom`, `/amcl_pose`, `/scan`, `/joint_states`, `/detections`, navigation events
+**Structured logging [Durraiyah owns]:**
+- ROS 2 topic subscribers (Python / rclpy) → structured log files (CSV / JSON)
+- Candidate topics to log: `/odom`, `/amcl_pose`, `/scan`, `/joint_states`, `/detections`, navigation events
 
-Scope (what gets streamed, what analytics are shown) to be decided in Week 1. At minimum, Durraiyah delivers structured logging of robot pose and detection events by Week 4.
+Durraiyah delivers structured logging of robot pose and detection events by Week 4.
 
 ---
 
@@ -140,7 +141,6 @@ Scope (what gets streamed, what analytics are shown) to be decided in Week 1. At
 | Simulator | Gazebo Harmonic vs. MuJoCo/RoboSuite | Yes — blocks Weeks 2+ | Alexander + Basavaraj |
 | SLAM algorithm | SLAM Toolbox vs. LIO-SAM | Yes — blocks Week 3 | Basavaraj (after Alexander confirms IMU) |
 | Sim-to-real scope | Planned for Weeks 7–8; exact acceptance criteria TBD | No — in scope | Nick |
-| Telemetry pipeline | RViz2 only vs. Kafka/Spark | No — parallelizable | Durraiyah |
 | Imitation learning | In scope vs. dropped | No — affects Alexander Weeks 1–4 | Alexander |
 
 ---
