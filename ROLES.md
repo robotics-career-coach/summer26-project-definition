@@ -37,7 +37,7 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ### Alexander Mak — Perception & Hardware Lead
 
-**Background:** Python, C/C++, ROS 2, YOLO, TensorRT, Docker, AWS, Jetson experience; owns the Yahboom ROSMASTER M3 Pro
+**Background:** Python, C/C++, ROS 2, YOLO, TensorRT, Docker, AWS, Jetson experience; data engineering; owns the Yahboom ROSMASTER M3 Pro
 
 **Primary ownership:**
 - YOLOv8n inference node (object detection on RGB image, published as `/detections`)
@@ -48,6 +48,7 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 **Contributing to:**
 - Simulation environment (robot model and sensor plugins, with Basavaraj)
 - Arm perception integration (hand-off object pose to MoveIt 2 pipeline)
+- Telemetry data ingestion and pipelines (with Durraiyah)
 
 **Open item:** If imitation learning (behavior cloning via RoboMimic on MuJoCo) stays in scope, Alexander leads that as a parallel Milestone B. Confirm scope at kickoff.
 
