@@ -55,7 +55,7 @@ flowchart TD
 - **Sensors:**
   - 2D or 3D LiDAR (SLAM + obstacle avoidance costmap)
   - RGB-D camera (object detection + depth projection)
-  - IMU: **[OPEN]** — must confirm whether M3 Pro includes a working IMU before committing to LIO-SAM
+  - IMU: Confirmed present on M3 Pro (Alexander verified)
 
 ---
 
@@ -83,9 +83,9 @@ flowchart TD
 | SLAM Toolbox | ROS 2 native; well-supported; simpler setup; works in sim and on hardware | LiDAR-only (no IMU fusion) | LiDAR only |
 | LIO-SAM | Tightly-coupled LiDAR + IMU fusion; robust in dynamic environments | More complex setup; needs a calibrated IMU | LiDAR + IMU |
 
-**Recommendation:** Default to SLAM Toolbox. LIO-SAM is not necessary for an indoor warehouse environment, and the added complexity risks blocking Week 3. Switch to LIO-SAM only if Alexander confirms the M3 Pro has a working IMU and the team wants the more robust localization for sim-to-real.
+**Recommendation:** Default to SLAM Toolbox. LIO-SAM is not necessary for an indoor warehouse environment, and the added complexity risks blocking Week 3. However, since Alexander has confirmed the M3 Pro has a working IMU, LIO-SAM is now a viable option if the team wants more robust localization for sim-to-real.
 
-**Action item (Week 1):** Alexander confirms M3 Pro IMU → Basavaraj updates SLAM choice → team closes this decision in the kickoff standup.
+**Action item (Week 1):** ~~Alexander confirms M3 Pro IMU~~ ✓ Confirmed — Basavaraj updates SLAM choice → team closes this decision in the kickoff standup.
 
 ---
 
@@ -139,7 +139,7 @@ Durraiyah delivers structured logging of robot pose and detection events by Week
 | Decision | Options | Blocking? | Decision Owner |
 |---|---|---|---|
 | Simulator | Gazebo Harmonic vs. MuJoCo/RoboSuite | Yes — blocks Weeks 2+ | Alexander + Basavaraj |
-| SLAM algorithm | SLAM Toolbox vs. LIO-SAM | Yes — blocks Week 3 | Basavaraj (after Alexander confirms IMU) |
+| SLAM algorithm | SLAM Toolbox vs. LIO-SAM | Yes — blocks Week 3 | Basavaraj (IMU confirmed ✓ — ready to decide) |
 | Sim-to-real scope | Planned for Weeks 7–8; exact acceptance criteria TBD | No — in scope | Nick |
 | Imitation learning | In scope vs. dropped | No — affects Alexander Weeks 1–4 | Alexander |
 
