@@ -8,13 +8,14 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ## Team
 
-| Member | Location | Timezone | Role |
-|---|---|---|---|
-| Nicholas Kirsch | Pittsburgh, PA | ET | Program Manager |
-| Alexander Mak | Philadelphia, PA | ET | Perception & Hardware Lead |
-| Arjun Malarmannan | Boston, MA | ET | Software Engineering Lead |
-| Basavaraj Chikki | Bengaluru, India | IST | Navigation & Simulation Lead |
-| Durraiyah Muneer | Karachi, Pakistan | PKT | Telemetry & Data Lead |
+| Member | Location | Timezone | GMT Offset (summer) | Role |
+|---|---|---|---|---|
+| Nicholas Kirsch | Pittsburgh, PA | ET | GMT−4 | Program Manager |
+| Alexander Mak | Philadelphia, PA | ET | GMT−4 | Perception & Hardware Lead |
+| Arjun Malarmannan | Boston, MA | ET | GMT−4 | Software Engineering Lead |
+| Basavaraj Chikki | Bengaluru, India | IST | GMT+5:30 | Navigation & Simulation Lead |
+| Durraiyah Muneer | Karachi, Pakistan | PKT | GMT+5 | Telemetry & Data Lead |
+| Kamran Ali | Cologne, Germany | CEST | GMT+2 | Workstream TBD at kickoff |
 
 ---
 
@@ -107,6 +108,20 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ---
 
+### Kamran Ali — Workstream TBD at Kickoff
+
+**Background:** C/C++, Python, ROS 2 Humble, Arduino/ESP, Raspberry Pi, SolidWorks; MSc Autonomous Systems (H-BRS, in progress); BE Mechatronics; firmware developer at Luna Innovations (IPC-based comms, SNMP, Python automation); YOLOv5 tool detection (CASI surgical tray project at AKUH); robotic arm simulation in ROS Kinetic + Gazebo; certified data analyst
+
+**Potential contributions (confirm at kickoff):**
+- Firmware and embedded integration (strongest current experience — directly relevant to sim-to-real hardware bring-up)
+- Simulation environment (Gazebo experience from robotic arm project, with Basavaraj)
+- Perception pipeline (YOLOv5 experience maps to the YOLOv8n detection node, with Alexander)
+- MoveIt 2 arm control (built a gesture-controlled robotic arm sim in ROS + Gazebo)
+
+**Note:** Kamran's firmware and embedded background complements Alexander's hardware lead role. His robotic arm and YOLO experience give him overlap with both the perception and manipulation workstreams — assign primary ownership at kickoff based on where the team needs the most bandwidth.
+
+---
+
 ## Shared Responsibilities
 
 | Responsibility | Expectation |
@@ -121,14 +136,21 @@ Review and adjust at the Week 1 kickoff if the team has different preferences.
 
 ## Timezones
 
-| Member | Timezone | UTC Offset (summer) |
-|---|---|---|
-| Alexander Mak | US Eastern (ET) | UTC−4 |
-| Arjun Malarmannan | US Eastern (ET) | UTC−4 |
-| Basavaraj Chikki | India Standard Time (IST) | UTC+5:30 |
-| Durraiyah Muneer | Pakistan Standard Time (PKT) | UTC+5 |
+| Member | Timezone | UTC Offset (summer) | Hours ahead of ET |
+|---|---|---|---|
+| Alexander Mak | US Eastern (ET) | UTC−4 | — |
+| Arjun Malarmannan | US Eastern (ET) | UTC−4 | — |
+| Kamran Ali | Central European Summer Time (CEST) | UTC+2 | +6 h |
+| Basavaraj Chikki | India Standard Time (IST) | UTC+5:30 | +9.5 h |
+| Durraiyah Muneer | Pakistan Standard Time (PKT) | UTC+5 | +9 h |
 
-The team is **async-first** due to the gap between US Eastern and South Asian timezones. GitHub comments and Slack are the primary collaboration channels. Blocking decisions should be made via GitHub PRs with a 48-hour review window so no one is forced into off-hours work. The weekly standup time should be set via a Doodle poll in Week 1.
+The team spans three timezone clusters with significant gaps:
+
+- **US Eastern (ET)** — Alexander, Arjun: baseline
+- **Central Europe (CEST)** — Kamran: 6 hours ahead of ET
+- **South Asia (PKT / IST)** — Durraiyah, Basavaraj: 9–9.5 hours ahead of ET (only 3–3.5 hours ahead of Kamran)
+
+The team is **async-first**. GitHub comments and Slack are the primary collaboration channels. Blocking decisions should be made via GitHub PRs with a 48-hour review window so no one is forced into off-hours work. The weekly standup time should be set via a Doodle poll in Week 1.
 
 ---
 
