@@ -163,8 +163,82 @@ The simulation demo is the **primary deliverable**. Sim-to-real transfer is plan
 
 ---
 
-## ROSMASTER M3 Pro Hardware Interface
+# ROSMASTER M3 Pro Hardware Interface
 
+## Hardware Architecture
+
+Physical components and the driver nodes that own them. Most peripherals route
+through the STM32 controller, which `/YB_Node` talks to over serial.
+
+```mermaid
+flowchart TB
+    subgraph HW["Physical Hardware"]
+        BASE[Mecanum Drive Base]
+        ARM[6-DOF Arm]
+        L0[LiDAR 0]
+        L1[LiDAR 1]
+        IMU[IMU]
+        BAT[Battery]
+        BUZZ[Buzzer]
+        LED[RGB LED]
+        CAM[RGB Camera]
+        JOY[Game Controller]
+    end
+
+    MCU[STM32 Controller]
+
+    BASE --- MCU
+    ARM --- MCU
+    IMU --- MCU
+    BAT --- MCU
+    BUZZ --- MCU
+    LED --- MCU
+
+    MCU --- YB(["/YB_Node"])
+    L0 --- YB
+    L1 --- YB
+    CAM --- CamDrv([Camera Driver])
+    JOY --- JoyDrv(["/joy_node"])
+```
+
+## ROS 2 Node Graph
+
+*Arrows point from publisher to topic, and from topic to subscriber.
+
+```mermaid
+flowchart LR
+    %% Nodes (ellipses)
+    joy_node(["/joy_node"])
+    joy_ctrl(["/joy_ctrl"])
+    yb(["/YB_Node"])
+    autostart(["/autostart_node"])
+
+    %% Command flow
+    joy_node --> joy["/joy"] --> joy_ctrl
+
+    joy_ctrl --> cmd_vel["/cmd_vel"]
+    autostart --> cmd_vel
+    cmd_vel --> yb
+
+    joy_ctrl --> arm_joint["/arm_joint"] --> yb
+    joy_ctrl --> arm6["/arm6_joints"] --> yb
+    joy_ctrl --> beep["/beep"] --> yb
+    joy_ctrl --> rgb["/rgb"] --> yb
+
+    joy_ctrl --> joystate["/JoyState"]
+    joy_ctrl --> cancel["/move_base/cancel"]
+
+    feedback["/joy/set_feedback"] --> joy_node
+
+    %% Telemetry out of the hardware node
+    yb --> battery["/battery"]
+    yb --> imu["/imu/data_raw"]
+    yb --> odom["/odom_raw"]
+    yb --> scan0["/scan0"]
+    yb --> scan1["/scan1"]
+```
+
+## Node Reference
 
 | ROS Node | Description | Responsibility |
 |----------|-------------|----------------|
@@ -173,108 +247,7 @@ The simulation demo is the **primary deliverable**. Sim-to-real transfer is plan
 | **`/joy_node`** | Joystick Driver Node | Standard ROS 2 joystick driver. Reads the physical game controller and publishes `sensor_msgs/msg/Joy` messages. Accepts haptic feedback through `/joy/set_feedback`. |
 | **`/joy_ctrl`** | Joystick Control Node | Converts joystick input into robot control commands. Publishes velocity commands (`/cmd_vel`), arm commands (`/arm_joint`, `/arm6_joints`), RGB LED commands (`/rgb`), buzzer commands (`/beep`), and joystick state (`/JoyState`). |
 
-```mermaid
-flowchart TB
-
-    %% ---------------- Hardware ----------------
-    subgraph HW["Physical Hardware"]
-        CAM[RGB Camera]
-        L0[LiDAR 0]
-        L1[LiDAR 1]
-        IMU[IMU]
-        BASE[Mecanum Drive Base]
-        ARM[6-DOF Arm]
-        BAT[Battery]
-        MCU[STM32 Controller]
-        JOY[Joystick]
-    end
-
-    %% ---------------- Drivers ----------------
-    subgraph DRIVERS["ROS Hardware Interface Layer"]
-
-        CameraNode["Camera Driver"]
-        LidarNode["LiDAR Driver"]
-        ImuNode["IMU Driver"]
-        BaseNode["Base Driver"]
-        ArmNode["Arm Driver"]
-        BatteryNode["Battery Monitor"]
-        JoystickNode["Joystick Driver"]
-        MCUNode["MCU Interface"]
-
-    end
-
-    %% ---------------- Existing Topics ----------------
-    subgraph TOPICS["ROS Topics"]
-
-    joy["/joy_node"]
-    ctrl["/joy_ctrl"]
-    yb["/YB_Node"]
-    auto["/autostart_node"]
-
-    joy -- "/joy" --> ctrl
-
-    ctrl -- "/cmd_vel" --> yb
-    auto -- "/cmd_vel" --> yb
-
-    ctrl -- "/arm_joint" --> yb
-    ctrl -- "/arm6_joints" --> yb
-
-    ctrl -- "/beep" --> yb
-    ctrl -- "/rgb" --> yb
-
-    yb -- "/battery" --> battery["/battery"]
-    yb -- "/imu/data_raw" --> imu["/imu/data_raw"]
-    yb -- "/odom_raw" --> odom["/odom_raw"]
-    yb -- "/scan0" --> scan0["/scan0"]
-    yb -- "/scan1" --> scan1["/scan1"]
-
-    ctrl --> joyState["/JoyState"]
-
-    ctrl -. publishes .-> cancel["/move_base/cancel"]
-
-    joy -. subscribes .-> feedback["/joy/set_feedback"]
-
-
-    end
-
-    %% Hardware -> Drivers
-    CAM --> CameraNode
-    L0 --> LidarNode
-    L1 --> LidarNode
-    IMU --> ImuNode
-    BASE --> BaseNode
-    ARM --> ArmNode
-    BAT --> BatteryNode
-    JOY --> JoystickNode
-    MCU --> MCUNode
-
-    %% Drivers -> Topics
-    CameraNode --> RGB
-
-    LidarNode --> Scan0
-    LidarNode --> Scan1
-
-    ImuNode --> IMUTopic
-
-    BaseNode --> Odom
-    BaseNode --> CmdVel
-
-    ArmNode --> ArmJoint
-    ArmNode --> Arm6
-
-    BatteryNode --> Battery
-
-    JoystickNode --> Joy
-    JoystickNode --> JoyState
-    JoystickNode --> JoyFeedback
-
-
-    %% Navigation
-    Cancel --> BaseNode
-
-    %% ROS Core
-    Params --> Rosout
-```
+## Topic Reference
 
 | Topic               | Message Type                        | Purpose                               |
 | ------------------- | ----------------------------------- | ------------------------------------- |
