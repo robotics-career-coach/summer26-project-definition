@@ -203,7 +203,8 @@ flowchart TB
 
 ## ROS 2 Node Graph
 
-*Arrows point from publisher to topic, and from topic to subscriber.
+Following `rqt_graph` conventions: **ellipses are nodes**, **rectangles are topics**.
+Arrows point from publisher to topic, and from topic to subscriber.
 
 ```mermaid
 flowchart LR
@@ -267,6 +268,7 @@ flowchart LR
 | `/move_base/cancel` | `actionlib_msgs/msg/GoalID`         | Cancel navigation goal                |
 | `/parameter_events` | `rcl_interfaces/msg/ParameterEvent` | ROS 2 parameter updates               |
 | `/rosout`           | `rcl_interfaces/msg/Log`            | ROS logging                           |
+
 
 
 *Open a PR to update this document when decisions are made. Tag the relevant team member as reviewer.*
