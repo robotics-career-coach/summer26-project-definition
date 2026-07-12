@@ -163,4 +163,112 @@ The simulation demo is the **primary deliverable**. Sim-to-real transfer is plan
 
 ---
 
+# ROSMASTER M3 Pro Hardware Interface
+
+## Hardware Architecture
+
+Physical components and the driver nodes that own them. Most peripherals route
+through the STM32 controller, which `/YB_Node` talks to over serial.
+
+```mermaid
+flowchart TB
+    subgraph HW["Physical Hardware"]
+        BASE[Mecanum Drive Base]
+        ARM[6-DOF Arm]
+        L0[LiDAR 0]
+        L1[LiDAR 1]
+        IMU[IMU]
+        BAT[Battery]
+        BUZZ[Buzzer]
+        LED[RGB LED]
+        CAM[RGB Camera]
+        JOY[Game Controller]
+    end
+
+    MCU[STM32 Controller]
+
+    BASE --- MCU
+    ARM --- MCU
+    IMU --- MCU
+    BAT --- MCU
+    BUZZ --- MCU
+    LED --- MCU
+
+    MCU --- YB(["/YB_Node"])
+    L0 --- YB
+    L1 --- YB
+    CAM --- CamDrv([Camera Driver])
+    JOY --- JoyDrv(["/joy_node"])
+```
+
+## ROS 2 Node Graph
+
+Following `rqt_graph` conventions: **ellipses are nodes**, **rectangles are topics**.
+Arrows point from publisher to topic, and from topic to subscriber.
+
+```mermaid
+flowchart LR
+    %% Nodes (ellipses)
+    joy_node(["/joy_node"])
+    joy_ctrl(["/joy_ctrl"])
+    yb(["/YB_Node"])
+    autostart(["/autostart_node"])
+
+    %% Command flow
+    joy_node --> joy["/joy"] --> joy_ctrl
+
+    joy_ctrl --> cmd_vel["/cmd_vel"]
+    autostart --> cmd_vel
+    cmd_vel --> yb
+
+    joy_ctrl --> arm_joint["/arm_joint"] --> yb
+    joy_ctrl --> arm6["/arm6_joints"] --> yb
+    joy_ctrl --> beep["/beep"] --> yb
+    joy_ctrl --> rgb["/rgb"] --> yb
+
+    joy_ctrl --> joystate["/JoyState"]
+    joy_ctrl --> cancel["/move_base/cancel"]
+
+    feedback["/joy/set_feedback"] --> joy_node
+
+    %% Telemetry out of the hardware node
+    yb --> battery["/battery"]
+    yb --> imu["/imu/data_raw"]
+    yb --> odom["/odom_raw"]
+    yb --> scan0["/scan0"]
+    yb --> scan1["/scan1"]
+```
+
+## Node Reference
+
+| ROS Node | Description | Responsibility |
+|----------|-------------|----------------|
+| **`/YB_Node`** | Yahboom Hardware Interface Node | Primary interface between ROS 2 and the ROSMASTER hardware. Receives commands for the mobile base, robotic arm, buzzer, and RGB LED, and publishes hardware telemetry including LiDAR, IMU, odometry, and battery status. |
+| **`/autostart_node`** | Autostart Node | Initializes the robot during startup and publishes initialization commands (including `/cmd_vel`) required during system bring-up. |
+| **`/joy_node`** | Joystick Driver Node | Standard ROS 2 joystick driver. Reads the physical game controller and publishes `sensor_msgs/msg/Joy` messages. Accepts haptic feedback through `/joy/set_feedback`. |
+| **`/joy_ctrl`** | Joystick Control Node | Converts joystick input into robot control commands. Publishes velocity commands (`/cmd_vel`), arm commands (`/arm_joint`, `/arm6_joints`), RGB LED commands (`/rgb`), buzzer commands (`/beep`), and joystick state (`/JoyState`). |
+
+## Topic Reference
+
+| Topic               | Message Type                        | Purpose                               |
+| ------------------- | ----------------------------------- | ------------------------------------- |
+| `/cmd_vel`          | `geometry_msgs/msg/Twist`           | Velocity commands to the mecanum base |
+| `/odom_raw`         | `nav_msgs/msg/Odometry`             | Raw wheel odometry                    |
+| `/imu/data_raw`     | `sensor_msgs/msg/Imu`               | IMU measurements                      |
+| `/scan0`            | `sensor_msgs/msg/LaserScan`         | Primary LiDAR scan                    |
+| `/scan1`            | `sensor_msgs/msg/LaserScan`         | Secondary LiDAR scan                  |
+| `/arm_joint`        | `arm_msgs/msg/ArmJoint`             | Individual arm joint command          |
+| `/arm6_joints`      | `arm_msgs/msg/ArmJoints`            | Six-joint arm state/command           |
+| `/battery`          | `std_msgs/msg/Float32`              | Battery voltage or charge level       |
+| `/joy`              | `sensor_msgs/msg/Joy`               | Joystick input                        |
+| `/JoyState`         | `std_msgs/msg/Bool`                 | Joystick enable/status                |
+| `/joy/set_feedback` | `sensor_msgs/msg/JoyFeedback`       | Controller vibration/feedback         |
+| `/beep`             | `std_msgs/msg/UInt16`               | Buzzer command                        |
+| `/rgb`              | `std_msgs/msg/ColorRGBA`            | RGB LED control                       |
+| `/move_base/cancel` | `actionlib_msgs/msg/GoalID`         | Cancel navigation goal                |
+| `/parameter_events` | `rcl_interfaces/msg/ParameterEvent` | ROS 2 parameter updates               |
+| `/rosout`           | `rcl_interfaces/msg/Log`            | ROS logging                           |
+
+
+
 *Open a PR to update this document when decisions are made. Tag the relevant team member as reviewer.*
